@@ -1,0 +1,1 @@
+//This component will be used to render the output in JSON
