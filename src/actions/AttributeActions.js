@@ -21,7 +21,7 @@ const AttributeActions = {
             accuracy: 0,
             enumerations:[]
         };
-        return {
+        return{
             type: constants.CREATE_ATTRIBUTE,
             payload: ATTRIBUTE
         }
@@ -33,6 +33,15 @@ const AttributeActions = {
             type:constants.CHANGE_ATTRIBUTE,
             payload:attribute
         }
+    },
+
+    createEnumeration(enumeration)
+    {
+        return{
+            type:constants.CREATE_ENUMERATION,
+            payload:enumeration
+        }
+
     }
 };
 

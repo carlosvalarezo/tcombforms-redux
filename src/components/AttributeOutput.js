@@ -20,7 +20,6 @@ class AttributeOutput extends Component {
 
     }
     render() {
-        console.log("HI ", this.state.attributesList);
         return <div>{JSON.stringify(this.state.attributesList)}</div>
 
     }

@@ -6,7 +6,7 @@ import {Card, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import {orange50} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
-import Chip from 'material-ui/Chip';
+import ChipsContent from '../components/ChipsContent';
 import Add from 'material-ui/svg-icons/content/add-circle';
 import update from 'react-addons-update';
 
@@ -15,16 +15,8 @@ class AttributeForm extends Component {
         super(props);
         this.state = {
             expanded: true,
-            enumeration: ''
-        };
-        this.styles = {
-            chip: {
-                margin: 4,
-            },
-            wrapper: {
-                display: 'flex',
-                flexWrap: 'wrap',
-            },
+            enumeration: '',
+            enumerationsList:[]
         };
     }
 
@@ -37,10 +29,11 @@ class AttributeForm extends Component {
     };
 
     addEnumeration = () => {
-        let enumerationList = this.props.attribute.enumerations;
-        enumerationList.push(this.state.enumeration);
+        this.setState({enumerationsList:this.props.attribute.enumerations});
+        this.setState({enumerationsList:this.state.enumerationsList.push(this.state.enumeration)});
         //this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
         //this.renderChip();
+        this.props.handleEditAttribute(this.state.enumerationsList);
     }
 
 
@@ -98,7 +91,7 @@ class AttributeForm extends Component {
                 /><IconButton tooltip="Add Enumerations" onTouchTap={this.addEnumeration}>
                 <Add/>
             </IconButton>
-
+            <ChipsContent chips={this.state.enumerationsList}/>
             </div>
             <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
                 <CardText expandable={true}>

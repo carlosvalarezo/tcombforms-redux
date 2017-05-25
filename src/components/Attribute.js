@@ -25,7 +25,7 @@ class Attribute extends Component {
     render() {
 
         return <div>
-                <TabContent attributesList={this.props.attributesList} handleEditAttribute={this.handleEditAttribute}/>
+                <TabContent attributesList={this.props.attributesList} handleEditAttribute={this.handleEditAttribute.bind(this)}/>
                 <FlatButton label="Add attribute" backgroundColor={lightBlue50} onClick={this.handleNewAttribute.bind(this)}/>
                 <AttributeOutput attributesList={this.props.attributesList}/>
                 </div>
