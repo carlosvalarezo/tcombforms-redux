@@ -1,1 +1,1 @@
-//This component will hold the 4 tabs and the buttons SAVE and CANCEL
+//This component will hold the 4 tabs and the button ADD ATTRIBUTE
