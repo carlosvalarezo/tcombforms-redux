@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import TabContent from './TabContent';
 import AttributeForm from '../forms/AttributeForm';
 import FlatButton from 'material-ui/FlatButton';
 import {lightBlue50} from 'material-ui/styles/colors';
@@ -23,7 +24,7 @@ class Attribute extends Component {
     render() {
 
         return <div>
-                <AttributeForm/>
+                <TabContent attributesList={this.props.attributesList} />
                 <FlatButton label="Add attribute" backgroundColor={lightBlue50} onClick={this.handleNewAttribute.bind(this)}/>
                 <AttributeOutput attributesList={this.props.attributesList}/>
                 </div>

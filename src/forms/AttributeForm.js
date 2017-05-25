@@ -10,9 +10,6 @@ import Chip from 'material-ui/Chip';
 import Add from 'material-ui/svg-icons/content/add-circle';
 import update from 'react-addons-update';
 
-
-
-
 class AttributeForm extends Component {
     constructor(props) {
         super(props);

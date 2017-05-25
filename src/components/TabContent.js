@@ -1,28 +1,12 @@
 //This component will hold all the AttributeForm components that will be created with the button ADDCOMPONENT
 import React, {Component} from 'react';
+import AttributeForm from '../forms/AttributeForm';
 
 //Create the attribute in the store and in the UI
-class AttributeOutput extends Component {
-    constructor(props)
-    {
-        super(props);
-        this.state = {
-            attributesList:[]
-        }
-    }
-    componentDidMount()
-    {
-        this.setState({attributesList:this.props.attributesList});
-    }
-    componentWillReceiveProps()
-    {
-        this.setState({attributesList:this.props.attributesList} );
+class TabContent extends Component {
 
-    }
     render() {
-        console.log("HI ", this.state.attributesList);
-        return <div>{JSON.stringify(this.state.attributesList)}</div>
-
+        <AttributeForm attributesList={this.props.attributesList} />
     }
 };
-export default AttributeOutput;
+export default TabContent;
