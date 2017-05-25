@@ -15,20 +15,7 @@ class AttributeForm extends Component {
         super(props);
         this.state = {
             expanded: true,
-            enumeration: '',
-            attribute: {
-                name: '',
-                description: '',
-                defaultValue: '',
-                dataType: '',
-                format: '',
-                rangeMin: 0,
-                rangeMax: 0,
-                unitOfMeasurement: 0,
-                precision: 0,
-                accuracy: 0,
-                enumerations: []
-            }
+            enumeration: ''
         };
         this.styles = {
             chip: {
@@ -50,54 +37,36 @@ class AttributeForm extends Component {
     };
 
     addEnumeration = () => {
-        let enumerationList = this.state.attribute.enumerations;
+        let enumerationList = this.props.attribute.enumerations;
         enumerationList.push(this.state.enumeration);
-        this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
-        this.renderChip();
+        //this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
+        //this.renderChip();
     }
 
-    onCreatingChips()
-    {
-
-    }
-
-    renderChip() {
-        console.log("en chips");
-        return (
-            <Chip
-                key={0}
-                onRequestDelete={() => {}}
-                style={this.styles.chip}
-            >
-                HELLO
-            </Chip>
-        );
-    }
 
     handleChangeTextBox = (event) => {
         let value = event.target.value;
         let uiControl = event.target.id;
-        let attribute = this.state.attribute;
+        let attribute = this.props.attribute;
+        console.log("LORENZO ", attribute);
         uiControl !== 'enumerations' ? attribute[uiControl] = value : this.setState({enumeration: value});
-        this.setState({attribute: attribute});
+        //this.props.handleEditAttribute(attribute);
     }
 
     render() {
         return (<div>
             <div>
-
                 <TextField
                     hintText="Name"
                     floatingLabelText="Name"
-                    type="text" id="name"
+                    type="text" id="name" onChange={this.handleChangeTextBox.bind(this)}
                 />
-
             </div>
             <div>
                 <TextField
                     hintText="Description"
                     floatingLabelText="Description"
-                    type="text" id="description"
+                    type="text" id="description" onChange={this.handleChangeTextBox.bind(this)}
                 />
             </div>
             <div>
@@ -129,6 +98,7 @@ class AttributeForm extends Component {
                 /><IconButton tooltip="Add Enumerations" onTouchTap={this.addEnumeration}>
                 <Add/>
             </IconButton>
+
             </div>
             <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
                 <CardText expandable={true}>

@@ -19,6 +19,7 @@ const AttributeActions = {
             unitOfMeasurement: 0,
             precision: 0,
             accuracy: 0,
+            enumerations:[]
         };
         return {
             type: constants.CREATE_ATTRIBUTE,

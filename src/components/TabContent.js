@@ -6,7 +6,14 @@ import AttributeForm from '../forms/AttributeForm';
 class TabContent extends Component {
 
     render() {
-        <AttributeForm attributesList={this.props.attributesList} />
+        var attributeForms = this.props.attributesList.map((attribute) => {
+                return ( <div>
+                    <AttributeForm attribute={attribute} handleEditAttribute={this.props.handleEditAttribute}/>
+                </div>);
+            }
+        )
+        return <div>{attributeForms}</div>;
     }
-};
+}
+;
 export default TabContent;

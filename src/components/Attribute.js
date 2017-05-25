@@ -16,15 +16,16 @@ class Attribute extends Component {
         console.log("LIST = ", this.props.attributesList);
     }
 
-    handleEditAttribute()
+    handleEditAttribute(attribute)
     {
-        this.props.onChangeAttribute()
+        console.log("original = " + attribute);
+        this.props.onChangeAttribute(attribute);
     }
 
     render() {
 
         return <div>
-                <TabContent attributesList={this.props.attributesList} />
+                <TabContent attributesList={this.props.attributesList} handleEditAttribute={this.handleEditAttribute}/>
                 <FlatButton label="Add attribute" backgroundColor={lightBlue50} onClick={this.handleNewAttribute.bind(this)}/>
                 <AttributeOutput attributesList={this.props.attributesList}/>
                 </div>
