@@ -6,8 +6,11 @@ import {Card, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import {orange50} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
+import Chip from 'material-ui/Chip';
+import Add from 'material-ui/svg-icons/content/add-circle';
 import update from 'react-addons-update';
+
+
 
 
 class AttributeForm extends Component {
@@ -30,6 +33,15 @@ class AttributeForm extends Component {
                 enumerations: []
             }
         };
+        this.styles = {
+            chip: {
+                margin: 4,
+            },
+            wrapper: {
+                display: 'flex',
+                flexWrap: 'wrap',
+            },
+        };
     }
 
     handleExpand = () => {
@@ -44,7 +56,25 @@ class AttributeForm extends Component {
         let enumerationList = this.state.attribute.enumerations;
         enumerationList.push(this.state.enumeration);
         this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
-        console.log("enum ", this.state.attribute);
+        this.renderChip();
+    }
+
+    onCreatingChips()
+    {
+
+    }
+
+    renderChip() {
+        console.log("en chips");
+        return (
+            <Chip
+                key={0}
+                onRequestDelete={() => {}}
+                style={this.styles.chip}
+            >
+                HELLO
+            </Chip>
+        );
     }
 
     handleChangeTextBox = (event) => {
@@ -52,10 +82,7 @@ class AttributeForm extends Component {
         let uiControl = event.target.id;
         let attribute = this.state.attribute;
         uiControl !== 'enumerations' ? attribute[uiControl] = value : this.setState({enumeration: value});
-        console.log("eee", this.state.enumeration);
         this.setState({attribute: attribute});
-        console.log("value = ", this.state.attribute);
-        //console.log(JSON.parse(JSON.stringify(this.state.attribute)))
     }
 
     render() {
@@ -103,7 +130,7 @@ class AttributeForm extends Component {
                     floatingLabelText="Enumerations"
                     type="text" id="enumerations" onChange={this.handleChangeTextBox.bind(this)}
                 /><IconButton tooltip="Add Enumerations" onTouchTap={this.addEnumeration}>
-                <FontIcon className="material-icons">add_circle</FontIcon>
+                <Add/>
             </IconButton>
             </div>
             <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>

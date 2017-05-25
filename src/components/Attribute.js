@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import AttributeForm from '../forms/AttributeForm';
 import FlatButton from 'material-ui/FlatButton';
 import {lightBlue50} from 'material-ui/styles/colors';
-import FontIcon from 'material-ui/FontIcon';
+import AttributeOutput from './AttributeOutput';
+
 //Create the attribute in the store and in the UI
 class Attribute extends Component {
     constructor(props) {
@@ -20,9 +21,11 @@ class Attribute extends Component {
     }
 
     render() {
+
         return <div>
                 <AttributeForm/>
                 <FlatButton label="Add attribute" backgroundColor={lightBlue50} onClick={this.handleNewAttribute.bind(this)}/>
+                <AttributeOutput attributesList={this.props.attributesList}/>
                 </div>
     }
 }
