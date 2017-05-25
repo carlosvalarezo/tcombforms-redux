@@ -33,15 +33,6 @@ const AttributeActions = {
             type:constants.CHANGE_ATTRIBUTE,
             payload:attribute
         }
-    },
-
-    createEnumeration(enumeration)
-    {
-        return{
-            type:constants.CREATE_ENUMERATION,
-            payload:enumeration
-        }
-
     }
 };
 

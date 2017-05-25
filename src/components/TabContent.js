@@ -7,9 +7,9 @@ class TabContent extends Component {
 
     render() {
         var attributeForms = this.props.attributesList.map((attribute) => {
-                return ( <div>
+                return (<div>
                     <AttributeForm attribute={attribute} handleEditAttribute={this.props.handleEditAttribute}/>
-                </div>);
+                        </div>);
             }
         );
         return <div>{attributeForms}</div>;

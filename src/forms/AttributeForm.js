@@ -16,24 +16,27 @@ class AttributeForm extends Component {
         this.state = {
             expanded: true,
             enumeration: '',
-            enumerationsList:[]
+            attribute:{}
         };
     }
 
-    handleExpand = () => {
-        this.setState({expanded: true});
-    };
+    componentDidMount()
+    {
+        this.setState({attribute:this.props.attribute});
+    }
 
     handleExpandChange = (expanded) => {
         this.setState({expanded: expanded});
     };
 
     addEnumeration = () => {
-        this.setState({enumerationsList:this.props.attribute.enumerations});
-        this.setState({enumerationsList:this.state.enumerationsList.push(this.state.enumeration)});
-        //this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
+        let enumerationList = this.state.attribute.enumerations;
+        enumerationList.push(this.state.enumeration);
+        //this.setState({enumerationsList:this.state.enumerationsList.push(this.state.enumeration)});
+        this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
         //this.renderChip();
-        this.props.handleEditAttribute(this.state.enumerationsList);
+        this.props.handleEditAttribute(this.state.attribute);
+        //console.log("enumes", this.state.enumerationsList);
     }
 
 
@@ -41,7 +44,6 @@ class AttributeForm extends Component {
         let value = event.target.value;
         let uiControl = event.target.id;
         let attribute = this.props.attribute;
-        console.log("LORENZO ", attribute);
         uiControl !== 'enumerations' ? attribute[uiControl] = value : this.setState({enumeration: value});
         //this.props.handleEditAttribute(attribute);
     }
@@ -93,7 +95,7 @@ class AttributeForm extends Component {
             </IconButton>
             <ChipsContent chips={this.state.enumerationsList}/>
             </div>
-            <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
+            <Card expanded={false} onExpandChange={this.handleExpandChange}>
                 <CardText expandable={true}>
                     <div>
                         <TextField

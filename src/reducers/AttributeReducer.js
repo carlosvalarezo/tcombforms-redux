@@ -3,29 +3,23 @@ import _ from 'lodash';
 
 const INITIAL_STATE =
 {
-    attributesList:[]
+    attributesList: []
 }
 
-const AttributeReducer = (state = INITIAL_STATE, action ={}) =>
-{
+const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
     let index;
-    switch(action.type)
-    {
+    switch (action.type) {
         case constants.CREATE_ATTRIBUTE:
-            return { ...state, attributesList: [...state.attributesList, action.payload] };
+            return {...state, attributesList: [...state.attributesList, action.payload]};
         case constants.CHANGE_ATTRIBUTE:
-            index = _.findIndex(...state.attributesList, { id: action.payload.id });
             return {
                 ...state,
-                attributesList: [
-                    ...state.attributesList.slice(0, index),
-                    {
-                        ...state.attributesList[index],
-                        [action.payload.field]: action.payload.value,
-                    },
-                    ...state.attributesList.slice(index + 1)],
+                attributesList: state.attributesList.map(attribute => attribute.id === action.id ?
+                {...attribute, attributesList: action} :
+                    attribute)
             };
-        default: return state;
+        default:
+            return state;
     }
 }
 

@@ -3,10 +3,10 @@ import React, {Component} from 'react';
 import Chip from 'material-ui/Chip';
 
 //Create the attribute in the store and in the UI
-class TabContent extends Component {
+class ChipsContent extends Component {
 
     render() {
-        console.log("chips ", this.props.chips);
+        //console.log("chips ", this.props.chips);
         /*var chips = this.props.chips.map((chip) => {
                 return ( <div>
                     <Chip key= {chip} >chip</Chip>
@@ -15,9 +15,10 @@ class TabContent extends Component {
         );
 
         return <div>{chips}</div>;*/
+
         return <div></div>
     }
 }
 ;
-export default TabContent;
+export default ChipsContent;
 

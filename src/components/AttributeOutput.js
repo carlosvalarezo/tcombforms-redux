@@ -10,10 +10,6 @@ class AttributeOutput extends Component {
             attributesList:[]
         }
     }
-    componentDidMount()
-    {
-        this.setState({attributesList:this.props.attributesList});
-    }
     componentWillReceiveProps()
     {
         this.setState({attributesList:this.props.attributesList} );
