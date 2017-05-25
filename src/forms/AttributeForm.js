@@ -3,11 +3,10 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {Card, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import {orange50} from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
 import ChipsContent from '../components/ChipsContent';
 import Add from 'material-ui/svg-icons/content/add-circle';
+import FlatButton from 'material-ui/FlatButton';
 import update from 'react-addons-update';
 
 class AttributeForm extends Component {
@@ -93,7 +92,7 @@ class AttributeForm extends Component {
                 /><IconButton tooltip="Add Enumerations" onTouchTap={this.addEnumeration}>
                 <Add/>
             </IconButton>
-            <ChipsContent chips={this.state.enumerationsList}/>
+            <ChipsContent chips={this.props.attribute}/>
             </div>
             <Card expanded={false} onExpandChange={this.handleExpandChange}>
                 <CardText expandable={true}>
@@ -134,7 +133,7 @@ class AttributeForm extends Component {
                     </div>
                 </CardText>
             </Card>
-            <FlatButton label="Delete attribute" backgroundColor={orange50}/>
+            <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}/>
         </div>);
     }
 }

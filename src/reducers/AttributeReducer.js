@@ -1,5 +1,4 @@
 import constants from '../constants/constants';
-import _ from 'lodash';
 
 const INITIAL_STATE =
 {
@@ -7,7 +6,6 @@ const INITIAL_STATE =
 }
 
 const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
-    let index;
     switch (action.type) {
         case constants.CREATE_ATTRIBUTE:
             return {...state, attributesList: [...state.attributesList, action.payload]};

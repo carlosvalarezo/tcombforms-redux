@@ -3,11 +3,11 @@ import uuidV4 from 'uuid/v4';
 
 const AttributeActions = {
 
-    createAttribute()
+    createAttribute(category)
     {
         const ATTRIBUTE = {
             id: uuidV4(),
-            category: 0,
+            category: category,
             name: '',
             description: '',
             deviceResourceType: 'DEFAULT VALUE',

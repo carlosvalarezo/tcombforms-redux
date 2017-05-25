@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onCreateAttribute: () => dispatch(AttributeActions.createAttribute()),
+        onCreateAttribute: (category) => dispatch(AttributeActions.createAttribute(category)),
         onChangeAttribute: (attribute) => dispatch(AttributeActions.changeAttribute(attribute))
 
     }

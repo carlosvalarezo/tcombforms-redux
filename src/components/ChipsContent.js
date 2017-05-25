@@ -2,21 +2,29 @@
 import React, {Component} from 'react';
 import Chip from 'material-ui/Chip';
 
+const styles = {
+    chip: {
+        margin: 4,
+    },
+    wrapper: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+};
+
 //Create the attribute in the store and in the UI
 class ChipsContent extends Component {
 
     render() {
         //console.log("chips ", this.props.chips);
-        /*var chips = this.props.chips.map((chip) => {
+        var chips = this.props.chips.enumerations.map((chip) => {
                 return ( <div>
-                    <Chip key= {chip} >chip</Chip>
+                    <Chip key={chip} style={styles}>{chip}</Chip>
                 </div>);
             }
         );
 
-        return <div>{chips}</div>;*/
-
-        return <div></div>
+        return <div>{chips}</div>;
     }
 }
 ;
