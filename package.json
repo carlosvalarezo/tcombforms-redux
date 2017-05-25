@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "lodash": "^4.17.4",
+    "material-design-icons": "^3.0.1",
     "material-ui": "^0.18.1",
     "react": "^15.5.4",
+    "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.5",
     "react-tap-event-plugin": "^2.0.1",

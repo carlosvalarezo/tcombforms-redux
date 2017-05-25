@@ -1,6 +1,7 @@
 import React from 'react';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
+
 class AttributeTab extends Component {
     constructor(props) {
         super(props);

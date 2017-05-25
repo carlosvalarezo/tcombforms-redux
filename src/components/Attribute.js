@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import AttributeForm from '../forms/AttributeForm';
 import FlatButton from 'material-ui/FlatButton';
 import {lightBlue50} from 'material-ui/styles/colors';
