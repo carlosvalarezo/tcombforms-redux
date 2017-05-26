@@ -11,7 +11,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         onCreateAttribute: (category) => dispatch(AttributeActions.createAttribute(category)),
-        onChangeAttribute: (attribute) => dispatch(AttributeActions.changeAttribute(attribute))
+        onChangeAttribute: (attribute) => dispatch(AttributeActions.changeAttribute(attribute)),
+        onDeleteAttribute: (attribute) => dispatch(AttributeActions.deleteAttribute(attribute)),
+        onDeleteEnumeration:(enumeration) => dispatch(AttributeActions.deleteEnumeration(enumeration))
 
     }
 }

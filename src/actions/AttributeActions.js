@@ -19,9 +19,9 @@ const AttributeActions = {
             unitOfMeasurement: 0,
             precision: 0,
             accuracy: 0,
-            enumerations:[]
+            enumerations: []
         };
-        return{
+        return {
             type: constants.CREATE_ATTRIBUTE,
             payload: ATTRIBUTE
         }
@@ -29,9 +29,25 @@ const AttributeActions = {
 
     changeAttribute(attribute)
     {
+        return {
+            type: constants.CHANGE_ATTRIBUTE,
+            payload: attribute
+        }
+    },
+
+    deleteAttribute(attribute)
+    {
         return{
-            type:constants.CHANGE_ATTRIBUTE,
+            type:constants.DELETE_ATTRIBUTE,
             payload:attribute
+        }
+    },
+
+    deleteEnumeration(enumeration)
+    {
+        return{
+            type:constants.DELETE_ENUMERATION,
+            payload:enumeration
         }
     }
 };

@@ -11,15 +11,20 @@ const styles = {
         flexWrap: 'wrap',
     },
 };
-
-//Create the attribute in the store and in the UI
 class ChipsContent extends Component {
 
+    deleteEnumeration = (chip) => {
+        this.props.handleDeleteEnumeration(chip)
+    }
+
     render() {
-        //console.log("chips ", this.props.chips);
         var chips = this.props.chips.enumerations.map((chip) => {
                 return ( <div>
-                    <Chip key={chip} style={styles}>{chip}</Chip>
+                    <Chip key={chip}
+                          style={styles}
+                          onRequestDelete={() => this.deleteEnumeration(chip)}>
+                        {chip}
+                    </Chip>
                 </div>);
             }
         );
