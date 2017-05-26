@@ -9,6 +9,35 @@ import Add from 'material-ui/svg-icons/content/add-circle';
 import FlatButton from 'material-ui/FlatButton';
 import {GridList} from 'material-ui/GridList';
 import update from 'react-addons-update';
+import t from 'tcomb-form';
+
+var formatStruct = t.enums({
+    none: 'None',
+    number: 'Number',
+    boolean: 'Boolean',
+    dateTime: 'Date-Time',
+    cdata: 'CDATA',
+    uri: 'URI'
+});
+
+var dataTypeStruct = t.enums({
+    string: 'String',
+    object: 'Object'
+});
+
+const Positive = t.refinement(t.Number, (n) => {
+    n >= 0
+});
+
+const FormSchema = t.struct({
+    name: t.String,
+    description: t.maybe(t.String),
+    deviceResourceType: t.String,
+    defaultValue: t.String,
+    dataType: dataTypeStruct,
+    format: formatStruct,
+    enumerations: t.String
+});
 
 const styles = {
     root: {
@@ -26,16 +55,14 @@ const styles = {
     }
 };
 
+const Form = t.form.Form;
+
 class AttributeForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
             expanded: true,
-            enumeration: '',
-            attribute: {},
-            format: '',
-            dataType:''
-
+            value: ''
         };
     }
 
@@ -48,28 +75,41 @@ class AttributeForm extends Component {
     }
 
     onChangeFormat = (event, index, value) => {
-        this.setState({format:value});
+        this.setState({format: value});
         this.setState({expanded: value === 2})
     }
 
     onChangeDataType = (event, index, value) => {
-        this.setState({dataType:value});
+        this.setState({dataType: value});
 
     }
+
+    /*addEnumeration = () => {
+     let enumerationList = this.state.attribute.enumerations;
+     enumerationList.push(this.state.enumeration);
+     this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
+     this.props.handleEditAttribute(this.state.attribute);
+     }*/
 
     addEnumeration = () => {
-        let enumerationList = this.state.attribute.enumerations;
-        enumerationList.push(this.state.enumeration);
-        this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
-        this.props.handleEditAttribute(this.state.attribute);
+        /*this.setState({value}, () => {
+         this.props.attribute[path] = this.state.value[path];
+         this.props.handleEditAttribute(this.props.attribute);
+         });*/
+        let enumerationList = this.props.attribute.enumerations;
+        enumerationList.push(this.state.value['enumerations']);
+        //this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
+        this.props.handleEditAttribute(enumerationList);
     }
 
-    handleChangeTextBox = (event) => {
-        let value = event.target.value;
-        let uiControl = event.target.id;
-        let attribute = this.props.attribute;
-        uiControl !== 'enumerations' ? attribute[uiControl] = value : this.setState({enumeration: value});
-        this.props.handleEditAttribute(attribute);
+
+    handleChangeTextBox = (value, path) => {
+        (path != 'enumerations') ? (
+            this.setState({value}, () => {
+                this.props.attribute[path] = this.state.value[path];
+                this.props.handleEditAttribute(this.props.attribute);
+            })
+        ) : (this.setState({value}))
     }
 
     handleDeleteAttribute = () => {
@@ -80,104 +120,13 @@ class AttributeForm extends Component {
         return (<div style={styles.root}>
             <GridList cols={3}>
                 <div>
-                    <TextField
-                        hintText="Name"
-                        floatingLabelText="Name"
-                        type="text" id="name" onChange={this.handleChangeTextBox.bind(this)}
-                    />
+                    <Form ref="form" type={FormSchema} value={this.state.value}
+                          onChange={this.handleChangeTextBox}/>
                 </div>
-
-                <div>
-                    <TextField
-                        hintText="Description"
-                        floatingLabelText="Description"
-                        type="text" id="description" onChange={this.handleChangeTextBox.bind(this)}
-                    />
-                </div>
-
-                <div>
-                    <SelectField floatingLabelText="Device Resource Type" value={1} disabled={true}>
-                        <MenuItem value={1} primaryText="DEFAULT VALUE" id="default-value"/>
-                    </SelectField>
-                </div>
-
-                <div>
-                    <SelectField floatingLabelText="Data Type" value={1} id="data-type"
-                                 >
-                        <MenuItem value={1} primaryText="String"/>
-                        <MenuItem value={2} primaryText="Object"/>
-                    </SelectField>
-                </div>
-
-                <div>
-                    <SelectField floatingLabelText="Format" value={1}
-                                 >
-                        <MenuItem value={1} primaryText="None"/>
-                        <MenuItem value={2} primaryText="Number"/>
-                        <MenuItem value={3} primaryText="Boolean"/>
-                        <MenuItem value={4} primaryText="Date-Time"/>
-                        <MenuItem value={5} primaryText="CDATA"/>
-                        <MenuItem value={6} primaryText="URI"/>
-                    </SelectField>
-                </div>
-
-                <div>
-                    <TextField
-                        hintText="Enumerations"
-                        floatingLabelText="Enumerations"
-                        type="text" id="enumerations" onChange={this.handleChangeTextBox.bind(this)}
-                    /><IconButton tooltip="Add Enumerations" onTouchTap={this.addEnumeration.bind(this)}>
-                    <Add/>
-                </IconButton>
-                    <ChipsContent chips={this.props.attribute}
-                                  handleDeleteEnumeration={this.props.handleDeleteEnumeration}/>
-                </div>
-                <Card>
-                    <CardText expandable={this.state.expanded}>
-
-                        <div>
-                            <TextField
-                                hintText="Range min"
-                                floatingLabelText="Range min"
-                                type="text" id="range-min"
-                            />
-                        </div>
-
-                        <div>
-                            <TextField
-                                hintText="Range max"
-                                floatingLabelText="Range max"
-                                type="text" id="range-max"
-                            />
-                        </div>
-
-                        <div>
-                            <TextField
-                                hintText="Range max"
-                                floatingLabelText="Range max"
-                                type="text" id="range-max"
-                            />
-                        </div>
-
-                        <div>
-                            <TextField
-                                hintText="Precision"
-                                floatingLabelText="Precision"
-                                type="text" id="precision"
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                hintText="Accuracy"
-                                floatingLabelText="Accuracy"
-                                type="text" id="accuracy"
-                            />
-                        </div>
-
-                    </CardText>
-                </Card>
                 <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}
                             onClick={this.handleDeleteAttribute.bind(this)}/>
+                <FlatButton label="Add enumeration" backgroundColor={'lightgreen'}
+                            onClick={this.addEnumeration.bind(this)}/>
             </GridList>
         </div>);
     }
