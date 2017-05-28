@@ -31,14 +31,14 @@ const attributeForm = t.struct({
     description: t.String,
     deviceResourceType: t.String,
     defaultValue: t.String,
-    dataType:dataType,
-    format:format,
-    enumerations:t.String,
-    rangeMin:t.Number,
-    rangeMax:t.Number,
-    unitsOfMeasurement:t.String,
-    precision:t.Number,
-    accuracy:t.Number
+    dataType: dataType,
+    format: format,
+    enumerations: t.String,
+    rangeMin: t.Number,
+    rangeMax: t.Number,
+    unitsOfMeasurement: t.String,
+    precision: t.Number,
+    accuracy: t.Number
 });
 
 const Positive = t.refinement(t.Number, (n) => {
@@ -61,6 +61,12 @@ const styles = {
         width: 500,
         height: 450,
         overflowY: 'auto'
+    },
+    showDiv: {
+        height: 200
+    },
+    noShowDiv: {
+        display: 'none'
     }
 };
 
@@ -70,7 +76,8 @@ class AttributeForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expandNumber: true,
+            expandNumber: false,
+            expandEnumerations: false,
             value: null
         };
     }
@@ -113,8 +120,14 @@ class AttributeForm extends Component {
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];
                 this.props.handleEditAttribute(this.props.attribute);
-            })
-        ) : (this.setState({value}))
+            }), (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
+                ? this.setState({expandEnumerations: true})
+                : this.setState({expandEnumerations: false}),
+                (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
+                    ? this.setState({expandNumber:true})
+                    : this.setState({expandNumber:false})
+
+        ) : (this.setState({value}));
     }
 
     handleDeleteAttribute = () => {
@@ -132,17 +145,18 @@ class AttributeForm extends Component {
                     <div>{locals.inputs.defaultValue}</div>
                     <div>{locals.inputs.dataType}</div>
                     <div>{locals.inputs.format}</div>
-                    <div>
+                    <div
+                        style={this.state.expandEnumerations ? styles.showDiv : styles.noShowDiv}>
                         <div>{locals.inputs.enumerations}</div>
                         <FlatButton label="Add enumeration" backgroundColor={'lightgreen'}
                                     onClick={this.addEnumeration.bind(this)}/>
                         <ChipsContent chips={this.props.attribute.enumerations}
                                       handleDeleteEnumeration={this.props.handleDeleteEnumeration}/>
                     </div>
-                    <div>
+                    <div style={this.state.expandNumber ? styles.showDiv : styles.noShowDiv}>
                         <div>{locals.inputs.rangeMin}</div>
                         <div>{locals.inputs.rangeMax}</div>
-                        <div>{locals.inputs.unitsOfMeasurement}</div>
+                        <div>{locals.inputs.unitOfMeasurement}</div>
                         <div>{locals.inputs.precision}</div>
                         <div>{locals.inputs.accuracy}</div>
                     </div>
@@ -153,7 +167,6 @@ class AttributeForm extends Component {
         const options = {
             template: formLayout
         };
-
         return (<div style={styles.root}>
             <GridList cols={3}>
                 <div>
