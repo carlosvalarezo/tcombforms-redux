@@ -77,8 +77,11 @@ class AttributeForm extends Component {
         super(props);
         this.state = {
             expandNumber: false,
-            expandEnumerations: false,
-            value: null
+            expandEnumerations: true,
+            disabled: false,
+            value: {
+                deviceResourceType: 'DEFAULT VALUE'
+            }
         };
     }
 
@@ -115,18 +118,44 @@ class AttributeForm extends Component {
     }
 
 
+    /*handleChangeTextBox = (value, path) => {
+     (path != 'enumerations') ? (
+     this.setState({value}, () => {
+     this.props.attribute[path] = this.state.value[path];
+     this.props.handleEditAttribute(this.props.attribute);
+     }), (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
+     ? this.setState({expandEnumerations: true})
+     : this.setState({expandEnumerations: false}),
+     (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
+     ? this.setState({expandNumber: true})
+     : this.setState({expandNumber: false}),
+     (this.props.attribute['dataType'] == 'object')
+     ? (this.setState({disabled: true}, () => {
+     this.setState({value: null})
+     }))
+     : this.setState({disabled: false})
+
+     ) : (this.setState({value}));
+     }*/
+
     handleChangeTextBox = (value, path) => {
         (path != 'enumerations') ? (
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];
                 this.props.handleEditAttribute(this.props.attribute);
-            }), (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
-                ? this.setState({expandEnumerations: true})
-                : this.setState({expandEnumerations: false}),
-                (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
-                    ? this.setState({expandNumber:true})
-                    : this.setState({expandNumber:false})
-
+                (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
+                    ? this.setState({expandEnumerations: true})
+                    : this.setState({expandEnumerations: true}),
+                    (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
+                        ? (this.setState({expandNumber: true}), this.setState({expandEnumerations: false}))
+                        : this.setState({expandNumber: false}),
+                    (this.props.attribute['dataType'] == 'object')
+                        ? (this.setState({disabled: true}, () => {
+                        this.setState({value})
+                    }), this.setState({expandEnumerations: false}), this.setState({expandNumber: false}))
+                        : this.setState({disabled: false}),
+                    (this.props.attribute['dataType'] == 'string')
+            })
         ) : (this.setState({value}));
     }
 
@@ -165,7 +194,39 @@ class AttributeForm extends Component {
             );
         };
         const options = {
-            template: formLayout
+            template: formLayout,
+            fields: {
+                name: {
+                    label: 'Name',
+                    error:''
+                },
+                deviceResourceType: {
+                    disabled: true,
+                    nullOption: false,
+                    label: 'Device resource type:'
+                },
+                defaultValue: {
+                    label: 'Default value:',
+                    disabled: this.state.disabled
+                },
+                dataType: {
+                    nullOption: false,
+                    label: 'Data Type',
+                },
+                format: {
+                    nullOption: false,
+                    disabled: this.state.disabled
+                },
+                enumerationsData: {
+                    label: 'Enumerations',
+                },
+                rangeMin: {},
+                rangeMax: {},
+                unitOfMeasurement: {},
+                precision: {},
+                accuracy: {}
+
+            }
         };
         return (<div style={styles.root}>
             <GridList cols={3}>
