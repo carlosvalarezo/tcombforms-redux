@@ -9,9 +9,10 @@ import Add from 'material-ui/svg-icons/content/add-circle';
 import FlatButton from 'material-ui/FlatButton';
 import {GridList} from 'material-ui/GridList';
 import update from 'react-addons-update';
+import {Grid, Row, Col} from 'react-flexbox-grid';
 import t from 'tcomb-form';
 
-var formatStruct = t.enums({
+const format = t.enums({
     none: 'None',
     number: 'Number',
     boolean: 'Boolean',
@@ -20,24 +21,32 @@ var formatStruct = t.enums({
     uri: 'URI'
 });
 
-var dataTypeStruct = t.enums({
+const dataType = t.enums({
     string: 'String',
     object: 'Object'
+});
+
+const attributeForm = t.struct({
+    name: t.String,
+    description: t.String,
+    deviceResourceType: t.String,
+    defaultValue: t.String,
+    dataType:dataType,
+    format:format,
+    enumerations:t.String,
+    rangeMin:t.Number,
+    rangeMax:t.Number,
+    unitsOfMeasurement:t.String,
+    precision:t.Number,
+    accuracy:t.Number
 });
 
 const Positive = t.refinement(t.Number, (n) => {
     n >= 0
 });
 
-const FormSchema = t.struct({
-    name: t.String,
-    description: t.maybe(t.String),
-    deviceResourceType: t.String,
-    defaultValue: t.String,
-    dataType: dataTypeStruct,
-    format: formatStruct,
-    enumerations: t.String
-});
+//en options se puede poner la estructura que aparezca cuando se hace click en un de los items
+
 
 const styles = {
     root: {
@@ -61,8 +70,8 @@ class AttributeForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: true,
-            value: ''
+            expandNumber: true,
+            value: null
         };
     }
 
@@ -92,14 +101,10 @@ class AttributeForm extends Component {
      }*/
 
     addEnumeration = () => {
-        /*this.setState({value}, () => {
-         this.props.attribute[path] = this.state.value[path];
-         this.props.handleEditAttribute(this.props.attribute);
-         });*/
         let enumerationList = this.props.attribute.enumerations;
         enumerationList.push(this.state.value['enumerations']);
-        //this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
         this.props.handleEditAttribute(enumerationList);
+        console.log(this.props.attribute.enumerations);
     }
 
 
@@ -117,16 +122,48 @@ class AttributeForm extends Component {
     }
 
     render() {
+        const formLayout = (locals) => {
+            return (
+                <div>
+
+                    <div>{locals.inputs.name}</div>
+                    <div>{locals.inputs.description}</div>
+                    <div>{locals.inputs.deviceResourceType}</div>
+                    <div>{locals.inputs.defaultValue}</div>
+                    <div>{locals.inputs.dataType}</div>
+                    <div>{locals.inputs.format}</div>
+                    <div>
+                        <div>{locals.inputs.enumerations}</div>
+                        <FlatButton label="Add enumeration" backgroundColor={'lightgreen'}
+                                    onClick={this.addEnumeration.bind(this)}/>
+                        <ChipsContent chips={this.props.attribute.enumerations}
+                                      handleDeleteEnumeration={this.props.handleDeleteEnumeration}/>
+                    </div>
+                    <div>
+                        <div>{locals.inputs.rangeMin}</div>
+                        <div>{locals.inputs.rangeMax}</div>
+                        <div>{locals.inputs.unitsOfMeasurement}</div>
+                        <div>{locals.inputs.precision}</div>
+                        <div>{locals.inputs.accuracy}</div>
+                    </div>
+
+                </div>
+            );
+        };
+        const options = {
+            template: formLayout
+        };
+
         return (<div style={styles.root}>
             <GridList cols={3}>
                 <div>
-                    <Form ref="form" type={FormSchema} value={this.state.value}
+                    <Form ref="form" type={attributeForm} options={options} value={this.state.value}
                           onChange={this.handleChangeTextBox}/>
+
                 </div>
                 <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}
                             onClick={this.handleDeleteAttribute.bind(this)}/>
-                <FlatButton label="Add enumeration" backgroundColor={'lightgreen'}
-                            onClick={this.addEnumeration.bind(this)}/>
+
             </GridList>
         </div>);
     }

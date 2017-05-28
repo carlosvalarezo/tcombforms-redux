@@ -18,8 +18,8 @@ class ChipsContent extends Component {
     }
 
     render() {
-        var chips = this.props.chips.enumerations.map((chip) => {
-                return ( <div>
+        var chips = this.props.chips.map((chip) => {
+                return ( <div key={chip}>
                     <Chip key={chip}
                           style={styles}
                           onRequestDelete={() => this.deleteEnumeration(chip)}>
