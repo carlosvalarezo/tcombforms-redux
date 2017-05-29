@@ -1,18 +1,13 @@
 import React, {Component} from 'react';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
 import ChipsContent from '../components/ChipsContent';
-import Add from 'material-ui/svg-icons/content/add-circle';
 import FlatButton from 'material-ui/FlatButton';
 import {GridList} from 'material-ui/GridList';
-import update from 'react-addons-update';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import t from 'tcomb-form';
+import t1 from 'tcomb';
+import t2 from 'tcomb-validation';
 
-const format = t.enums({
+const format = t1.enums({
     none: 'None',
     number: 'Number',
     boolean: 'Boolean',
@@ -21,28 +16,24 @@ const format = t.enums({
     uri: 'URI'
 });
 
-const dataType = t.enums({
+const dataType = t1.enums({
     string: 'String',
     object: 'Object'
 });
 
-const attributeForm = t.struct({
-    name: t.String,
-    description: t.String,
-    deviceResourceType: t.String,
-    defaultValue: t.String,
+const attributeForm = t1.struct({
+    name: t1.String,
+    description: t1.String,
+    deviceResourceType: t1.String,
+    defaultValue: t1.String,
     dataType: dataType,
     format: format,
-    enumerations: t.String,
-    rangeMin: t.Number,
-    rangeMax: t.Number,
-    unitsOfMeasurement: t.String,
-    precision: t.Number,
-    accuracy: t.Number
-});
-
-const Positive = t.refinement(t.Number, (n) => {
-    n >= 0
+    enumerations: t1.String,
+    rangeMin: t1.Number,
+    rangeMax: t1.Number,
+    unitsOfMeasurement: t1.String,
+    precision: t1.Number,
+    accuracy: t1.Number
 });
 
 //en options se puede poner la estructura que aparezca cuando se hace click en un de los items
@@ -70,7 +61,16 @@ const styles = {
     }
 };
 
-const Form = t.form.Form;
+var maxMin = (x) => {
+    console.log("aa ", x['rangeMin'] );
+    console.log("bb ", x['rangeMax'] );
+    return x['rangeMin'] > x['rangeMax'] ? '????' : '99999';
+};
+
+var validateMaxMin = t2.refinement(attributeForm, maxMin);
+
+
+const Form = t1.form.Form;
 
 class AttributeForm extends Component {
     constructor(props) {
@@ -87,58 +87,34 @@ class AttributeForm extends Component {
 
     componentDidMount() {
         this.setState({attribute: this.props.attribute});
+        //let val = this.refs.form.getComponent('name').validate();
+        //let result = t2.validate(val, t1.String).isValid();
+        //console.log(val);
     }
-
-    handleExpandChange = (expanded) => {
-        this.setState({expanded: expanded});
-    }
-
-    onChangeFormat = (event, index, value) => {
-        this.setState({format: value});
-        this.setState({expanded: value === 2})
-    }
-
-    onChangeDataType = (event, index, value) => {
-        this.setState({dataType: value});
-
-    }
-
-    /*addEnumeration = () => {
-     let enumerationList = this.state.attribute.enumerations;
-     enumerationList.push(this.state.enumeration);
-     this.setState({attribute: update(this.state.attribute, {enumerations: {$set: enumerationList}})});
-     this.props.handleEditAttribute(this.state.attribute);
-     }*/
 
     addEnumeration = () => {
-        let enumerationList = this.props.attribute.enumerations;
-        enumerationList.push(this.state.value['enumerations']);
-        this.props.handleEditAttribute(enumerationList);
-        console.log(this.props.attribute.enumerations);
+        let val = this.refs.form.getComponent('enumerations').validate();
+        if (val.errors.length === 0) {
+            let enumerationList = this.props.attribute.enumerations;
+            enumerationList.push(this.state.value['enumerations']);
+            this.props.handleEditAttribute(enumerationList);
+            console.log(this.props.attribute.enumerations);
+        }
     }
 
-
-    /*handleChangeTextBox = (value, path) => {
-     (path != 'enumerations') ? (
-     this.setState({value}, () => {
-     this.props.attribute[path] = this.state.value[path];
-     this.props.handleEditAttribute(this.props.attribute);
-     }), (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
-     ? this.setState({expandEnumerations: true})
-     : this.setState({expandEnumerations: false}),
-     (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
-     ? this.setState({expandNumber: true})
-     : this.setState({expandNumber: false}),
-     (this.props.attribute['dataType'] == 'object')
-     ? (this.setState({disabled: true}, () => {
-     this.setState({value: null})
-     }))
-     : this.setState({disabled: false})
-
-     ) : (this.setState({value}));
-     }*/
-
     handleChangeTextBox = (value, path) => {
+        //let val = t2.validate(value,path);
+        let val = this.refs.form.getComponent(path).validate();
+        //let result = t2.validate(value[path], t1.String).isValid();
+        //console.log(path, result);
+        console.log("path ", path);
+        if (path == 'rangeMax'){
+            console.log("en rangemax");
+            let result = t2.validate(this.props.attribute, validateMaxMin).isValid();
+            console.log("uiuiui, ", result);
+            //? ((t2.validate(this.props.attribute, validateMaxMin).firstError().message))
+        }
+
         (path != 'enumerations') ? (
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];
@@ -153,8 +129,8 @@ class AttributeForm extends Component {
                         ? (this.setState({disabled: true}, () => {
                         this.setState({value})
                     }), this.setState({expandEnumerations: false}), this.setState({expandNumber: false}))
-                        : this.setState({disabled: false}),
-                    (this.props.attribute['dataType'] == 'string')
+                        : this.setState({disabled: false})
+
             })
         ) : (this.setState({value}));
     }
@@ -198,7 +174,7 @@ class AttributeForm extends Component {
             fields: {
                 name: {
                     label: 'Name',
-                    error:''
+                    error: 'required'
                 },
                 deviceResourceType: {
                     disabled: true,
@@ -217,22 +193,34 @@ class AttributeForm extends Component {
                     nullOption: false,
                     disabled: this.state.disabled
                 },
-                enumerationsData: {
+                enumerations: {
                     label: 'Enumerations',
+                    error: 'required'
                 },
-                rangeMin: {},
-                rangeMax: {},
-                unitOfMeasurement: {},
-                precision: {},
-                accuracy: {}
+                rangeMin: {
+                    error: 'Only numbers'
+                },
+                rangeMax: {
+                    error: 'Only numbers'
+                },
+                unitOfMeasurement: {
+                    error: 'required'
+                },
+                precision: {
+                    error: 'Only numbers'
+                },
+                accuracy: {
+                    error: 'Only numbers'
+                }
 
             }
         };
+
         return (<div style={styles.root}>
             <GridList cols={3}>
                 <div>
                     <Form ref="form" type={attributeForm} options={options} value={this.state.value}
-                          onChange={this.handleChangeTextBox}/>
+                          onChange={this.handleChangeTextBox} onFocus={this.handleFocus}/>
 
                 </div>
                 <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}
