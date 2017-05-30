@@ -59,8 +59,8 @@ const styles = {
 };
 
 var maxMin = (x) => {
-    console.log("===> ", x, " - ", !isNaN(x.rangeMax) );
-    if (isNaN(x.rangeMax)) return false;
+    //console.log("===> ", x, " - ", !isNaN(x.rangeMax) );
+    //if (isNaN(x.rangeMax)) return false;
     return (Number(x.rangeMax) > Number(x.rangeMin));
 };
 
@@ -69,9 +69,22 @@ var minMax = (x) => {
     return x.rangeMax > x.rangeMin;
 };
 
+var precisionAndAccuracy = (x) =>
+{
+    let range = Number(x.rangeMax) - Number(x.rangeMin);
+    return Number(range % x.precision) === 0;
+}
+
 var validateMaxMin = t2.refinement(t1.Any, maxMin);
 
 var validateMinMax = t2.refinement(t1.Any, minMax);
+
+var validatePrecisionAndAccuracy = t2.refinement(t1.Any, precisionAndAccuracy);
+
+validatePrecisionAndAccuracy.getValidationErrorMessage = (v) => {
+    if (isNaN(v.precision)) return 'only numbers';
+    return Number(v.precision) < Number(v.rangeMin) || Number(v.precision) > Number(v.rangeMax) ? 'precision must be between max & min' : '';
+}
 
 validateMaxMin.getValidationErrorMessage = (v) => {
     if (isNaN(v.rangeMax)) return 'only numbers';
@@ -125,15 +138,18 @@ class AttributeForm extends Component {
                     error: 'only numbers'
                 },
                 rangeMax: {
-                    error: 'only numbers',
+                    error: '',
                     hasError: true,
                     required:true
                 },
                 unitOfMeasurement: {
-                    error: 'required'
+                    error: 'required',
+                    hasError: true,
+                    required:true
                 },
                 precision: {
-                    error: 'only numbers'
+                    error: '',
+                    hasError: true
                 },
                 accuracy: {
                     error: 'only numbers'
@@ -157,8 +173,6 @@ class AttributeForm extends Component {
     }
 
     handleChangeTextBox = (value, path) => {
-        console.log("value ", value[path]);
-
 
         this.refs.form.getComponent(path).validate();
         if (path == 'rangeMax') {
@@ -180,6 +194,30 @@ class AttributeForm extends Component {
                     });
                     this.setState({fields: fields});
                 }
+        }
+
+        if(path == 'precision')
+        {
+            var result = t2.validate(value, validatePrecisionAndAccuracy);
+            if(result.errors.length > 0)
+            {
+                var fields = t.update(this.state.fields, {
+                    precision:{
+                        error: {'$set':result.errors[0].message}
+                    }
+                });
+                this.setState({fields:fields});
+            }
+            else
+            {
+                var fields = t.update(this.state.fields, {
+                    precision: {
+                        error: {'$set': ''}
+                    }
+                });
+                this.setState({fields: fields});
+            }
+
         }
         /*this.refs.form.getComponent(path).validate();
          var result = t2.validate(value, validateMaxMin);
