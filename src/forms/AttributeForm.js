@@ -36,9 +36,6 @@ const attributeForm = t1.struct({
     accuracy: t1.Number
 });
 
-//en options se puede poner la estructura que aparezca cuando se hace click en un de los items
-
-
 const styles = {
     root: {
         display: 'flex',
@@ -62,13 +59,24 @@ const styles = {
 };
 
 var maxMin = (x) => {
-    console.log("aa ", x['rangeMin'] );
-    console.log("bb ", x['rangeMax'] );
-    return x['rangeMin'] > x['rangeMax'] ? '????' : '99999';
+    console.log("===> ", x, " - ", !isNaN(x.rangeMax) );
+    if (isNaN(x.rangeMax)) return false;
+    return (Number(x.rangeMax) > Number(x.rangeMin));
 };
 
-var validateMaxMin = t2.refinement(attributeForm, maxMin);
+var minMax = (x) => {
+    console.log("yy ", x);
+    return x.rangeMax > x.rangeMin;
+};
 
+var validateMaxMin = t2.refinement(t1.Any, maxMin);
+
+var validateMinMax = t2.refinement(t1.Any, minMax);
+
+validateMaxMin.getValidationErrorMessage = (v) => {
+    if (isNaN(v.rangeMax)) return 'only numbers';
+    return Number(v.rangeMin) > Number(v.rangeMax) ? 'min cant be gt max' : '';
+}
 
 const Form = t1.form.Form;
 
@@ -81,15 +89,61 @@ class AttributeForm extends Component {
             disabled: false,
             value: {
                 deviceResourceType: 'DEFAULT VALUE'
+            },
+            attribute: null,
+            fields: {
+                name: {
+                    label: 'Name',
+                    error: 'required',
+                    attrs: {
+                        autoFocus: true,
+                        placeholder: 'NAME'
+                    }
+                },
+                deviceResourceType: {
+                    disabled: true,
+                    nullOption: false,
+                    label: 'Device resource type:'
+                },
+                defaultValue: {
+                    label: 'Default value:',
+                    disabled: false
+                },
+                dataType: {
+                    nullOption: false,
+                    label: 'Data Type',
+                },
+                format: {
+                    nullOption: false,
+                    disabled: false
+                },
+                enumerations: {
+                    label: 'Enumerations',
+                    error: 'required'
+                },
+                rangeMin: {
+                    error: 'only numbers'
+                },
+                rangeMax: {
+                    error: 'only numbers',
+                    hasError: true,
+                    required:true
+                },
+                unitOfMeasurement: {
+                    error: 'required'
+                },
+                precision: {
+                    error: 'only numbers'
+                },
+                accuracy: {
+                    error: 'only numbers'
+                }
             }
         };
     }
 
     componentDidMount() {
         this.setState({attribute: this.props.attribute});
-        //let val = this.refs.form.getComponent('name').validate();
-        //let result = t2.validate(val, t1.String).isValid();
-        //console.log(val);
     }
 
     addEnumeration = () => {
@@ -103,18 +157,34 @@ class AttributeForm extends Component {
     }
 
     handleChangeTextBox = (value, path) => {
-        //let val = t2.validate(value,path);
-        let val = this.refs.form.getComponent(path).validate();
-        //let result = t2.validate(value[path], t1.String).isValid();
-        //console.log(path, result);
-        console.log("path ", path);
-        if (path == 'rangeMax'){
-            console.log("en rangemax");
-            let result = t2.validate(this.props.attribute, validateMaxMin).isValid();
-            console.log("uiuiui, ", result);
-            //? ((t2.validate(this.props.attribute, validateMaxMin).firstError().message))
-        }
+        console.log("value ", value[path]);
 
+
+        this.refs.form.getComponent(path).validate();
+        if (path == 'rangeMax') {
+            var result = t2.validate(value, validateMaxMin);
+            if (result.errors.length > 0) {
+                var fields = t.update(this.state.fields, {
+                    rangeMax: {
+                        error: {'$set': result.errors[0].message}
+                    }
+                });
+                this.setState({fields: fields});
+            }
+            else
+                {
+                    var fields = t.update(this.state.fields, {
+                        rangeMax: {
+                            error: {'$set': ''}
+                        }
+                    });
+                    this.setState({fields: fields});
+                }
+        }
+        /*this.refs.form.getComponent(path).validate();
+         var result = t2.validate(value, validateMaxMin);
+         console.log("result ", result);
+         if(result) this.setState({rangeError:result.errors[0].message});*/
         (path != 'enumerations') ? (
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];
@@ -131,8 +201,11 @@ class AttributeForm extends Component {
                     }), this.setState({expandEnumerations: false}), this.setState({expandNumber: false}))
                         : this.setState({disabled: false})
 
+
             })
         ) : (this.setState({value}));
+
+
     }
 
     handleDeleteAttribute = () => {
@@ -171,56 +244,14 @@ class AttributeForm extends Component {
         };
         const options = {
             template: formLayout,
-            fields: {
-                name: {
-                    label: 'Name',
-                    error: 'required'
-                },
-                deviceResourceType: {
-                    disabled: true,
-                    nullOption: false,
-                    label: 'Device resource type:'
-                },
-                defaultValue: {
-                    label: 'Default value:',
-                    disabled: this.state.disabled
-                },
-                dataType: {
-                    nullOption: false,
-                    label: 'Data Type',
-                },
-                format: {
-                    nullOption: false,
-                    disabled: this.state.disabled
-                },
-                enumerations: {
-                    label: 'Enumerations',
-                    error: 'required'
-                },
-                rangeMin: {
-                    error: 'Only numbers'
-                },
-                rangeMax: {
-                    error: 'Only numbers'
-                },
-                unitOfMeasurement: {
-                    error: 'required'
-                },
-                precision: {
-                    error: 'Only numbers'
-                },
-                accuracy: {
-                    error: 'Only numbers'
-                }
-
-            }
+            fields: this.state.fields
         };
 
         return (<div style={styles.root}>
             <GridList cols={3}>
                 <div>
                     <Form ref="form" type={attributeForm} options={options} value={this.state.value}
-                          onChange={this.handleChangeTextBox} onFocus={this.handleFocus}/>
+                          onChange={this.handleChangeTextBox}/>
 
                 </div>
                 <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}

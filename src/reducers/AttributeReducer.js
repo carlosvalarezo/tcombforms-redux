@@ -11,7 +11,7 @@ const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
         case constants.CREATE_ATTRIBUTE:
             return {...state, attributesList: [...state.attributesList, action.payload]};
         case constants.CHANGE_ATTRIBUTE:
-            console.log("new value ", action.payload);
+            //console.log("new value ", action.payload);
             return {
                 ...state, attributesList: state.attributesList.map(attribute => attribute.id === action.id ?
                 {attribute, attributesList: action} : attribute)
