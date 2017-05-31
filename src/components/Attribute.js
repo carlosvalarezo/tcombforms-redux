@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import TabContent from './TabContent';
-import AttributeForm from '../forms/AttributeForm';
 import FlatButton from 'material-ui/FlatButton';
 import {lightBlue50} from 'material-ui/styles/colors';
 import AttributeOutput from './AttributeOutput';

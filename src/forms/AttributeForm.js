@@ -59,18 +59,21 @@ const styles = {
 };
 
 var maxMin = (x) => {
-    //console.log("===> ", x, " - ", !isNaN(x.rangeMax) );
-    //if (isNaN(x.rangeMax)) return false;
     return (Number(x.rangeMax) > Number(x.rangeMin));
 };
 
 var minMax = (x) => {
-    console.log("yy ", x);
     return x.rangeMax > x.rangeMin;
 };
 
-var precisionAndAccuracy = (x) =>
+var nameOK = (x) =>
 {
+    console.log("nameOK = ", x);
+    return !x;
+
+}
+
+var precisionAndAccuracy = (x) => {
     let range = Number(x.rangeMax) - Number(x.rangeMin);
     return Number(range % x.precision) === 0;
 }
@@ -80,6 +83,8 @@ var validateMaxMin = t2.refinement(t1.Any, maxMin);
 var validateMinMax = t2.refinement(t1.Any, minMax);
 
 var validatePrecisionAndAccuracy = t2.refinement(t1.Any, precisionAndAccuracy);
+
+var validateName = t2.refinement(t1.Boolean, nameOK);
 
 validatePrecisionAndAccuracy.getValidationErrorMessage = (v) => {
     if (isNaN(v.precision)) return 'only numbers';
@@ -91,23 +96,28 @@ validateMaxMin.getValidationErrorMessage = (v) => {
     return Number(v.rangeMin) > Number(v.rangeMax) ? 'min cant be gt max' : '';
 }
 
+validateName.getValidationErrorMessage = (v) => {
+     return v ? 'name repeated' : '';
+}
+
 const Form = t1.form.Form;
 
 class AttributeForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            attribute: null,
             expandNumber: false,
             expandEnumerations: true,
             disabled: false,
             value: {
                 deviceResourceType: 'DEFAULT VALUE'
             },
-            attribute: null,
             fields: {
                 name: {
                     label: 'Name',
-                    error: 'required',
+                    error: '',
+                    hasError: true,
                     attrs: {
                         autoFocus: true,
                         placeholder: 'NAME'
@@ -140,12 +150,12 @@ class AttributeForm extends Component {
                 rangeMax: {
                     error: '',
                     hasError: true,
-                    required:true
+                    required: true
                 },
                 unitOfMeasurement: {
                     error: 'required',
                     hasError: true,
-                    required:true
+                    required: true
                 },
                 precision: {
                     error: '',
@@ -175,6 +185,27 @@ class AttributeForm extends Component {
     handleChangeTextBox = (value, path) => {
 
         this.refs.form.getComponent(path).validate();
+
+        if(path == 'name')
+        {
+            var result = t2.validate(this.props.handleName(value[path]), validateName);
+            if (result.errors.length > 0) {
+                var fields = t.update(this.state.fields, {
+                    name: {
+                        error: {'$set': result.errors[0].message}
+                    }
+                });
+                this.setState({fields: fields});
+            }
+            else {
+                var fields = t.update(this.state.fields, {
+                    name: {
+                        error: {'$set': ''}
+                    }
+                });
+                this.setState({fields: fields});
+            }
+        }
         if (path == 'rangeMax') {
             var result = t2.validate(value, validateMaxMin);
             if (result.errors.length > 0) {
@@ -185,31 +216,27 @@ class AttributeForm extends Component {
                 });
                 this.setState({fields: fields});
             }
-            else
-                {
-                    var fields = t.update(this.state.fields, {
-                        rangeMax: {
-                            error: {'$set': ''}
-                        }
-                    });
-                    this.setState({fields: fields});
-                }
-        }
-
-        if(path == 'precision')
-        {
-            var result = t2.validate(value, validatePrecisionAndAccuracy);
-            if(result.errors.length > 0)
-            {
+            else {
                 var fields = t.update(this.state.fields, {
-                    precision:{
-                        error: {'$set':result.errors[0].message}
+                    rangeMax: {
+                        error: {'$set': ''}
                     }
                 });
-                this.setState({fields:fields});
+                this.setState({fields: fields});
             }
-            else
-            {
+        }
+
+        if (path == 'precision') {
+            var result = t2.validate(value, validatePrecisionAndAccuracy);
+            if (result.errors.length > 0) {
+                var fields = t.update(this.state.fields, {
+                    precision: {
+                        error: {'$set': result.errors[0].message}
+                    }
+                });
+                this.setState({fields: fields});
+            }
+            else {
                 var fields = t.update(this.state.fields, {
                     precision: {
                         error: {'$set': ''}
@@ -219,10 +246,6 @@ class AttributeForm extends Component {
             }
 
         }
-        /*this.refs.form.getComponent(path).validate();
-         var result = t2.validate(value, validateMaxMin);
-         console.log("result ", result);
-         if(result) this.setState({rangeError:result.errors[0].message});*/
         (path != 'enumerations') ? (
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];

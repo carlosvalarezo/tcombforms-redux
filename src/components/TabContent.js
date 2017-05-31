@@ -4,16 +4,20 @@ import AttributeForm from '../forms/AttributeForm';
 class TabContent extends Component {
     constructor(props) {
         super(props);
-        this.state = {category:''}
+        this.state = {category: ''}
     }
 
-    componentWillReceiveProps()
-    {
-        this.setState({category:this.props.category});
+    componentWillReceiveProps() {
+        this.setState({category: this.props.category});
+    }
+
+    handleName(name) {
+        for (let i = 0; i < (this.props.attributesList.length > 0 ? this.props.attributesList.length : 0); i++)
+            return this.props.attributesList[i].name == name;
+        //console.log("=>", name);
     }
 
     render() {
-        //console.log("attlist ", this.props.attributesList);
         var attributeForms = this.props.attributesList.filter((attribute)=> {
             return (attribute.category === this.state.category);
         }).map((attribute) => {
@@ -22,6 +26,7 @@ class TabContent extends Component {
                                    handleEditAttribute={this.props.handleEditAttribute}
                                    handleDeleteAttribute={this.props.handleDeleteAttribute}
                                    handleDeleteEnumeration={this.props.handleDeleteEnumeration}
+                                   handleName={this.handleName.bind(this)}
                     />
                 );
             }
