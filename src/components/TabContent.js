@@ -12,9 +12,14 @@ class TabContent extends Component {
     }
 
     handleName(name) {
-        for (let i = 0; i < (this.props.attributesList.length > 0 ? this.props.attributesList.length : 0); i++)
-            return this.props.attributesList[i].name == name;
-        //console.log("=>", name);
+        return(this.props.attributesList.find((attribute) => {
+            return attribute.name === name;
+        })) ? true : false;
+        /*for (i < this.props.attributesList.length; i++) {
+            let localName = this.props.attributesList[i].name;
+            console.log("name ", localName, " - ", i);
+            return (this.props.attributesList[i].name === name);
+        }*/
     }
 
     render() {
