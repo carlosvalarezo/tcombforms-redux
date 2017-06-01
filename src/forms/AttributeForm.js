@@ -56,10 +56,10 @@ const styles = {
         overflowY: 'auto'
     },
     showDiv: {
-        height: 200
+        display: 'block'
     },
     noShowDiv: {
-        display: 'none'
+        display: 'block'
     },
     button: {
         paddingTop: 25,
@@ -83,7 +83,7 @@ var nameOK = (x) => {
 
 var precision = (x) => {
     let range = Number(x.rangeMax) - Number(x.rangeMin);
-    return Number(range % x.precision) === 0;
+    return (Number(range) % Number(x.precision)) === 0;
 }
 
 var validateMaxMin = t2.refinement(t1.Any, maxMin);
@@ -95,22 +95,22 @@ var validatePrecision = t2.refinement(t1.Any, precision);
 var validateName = t2.refinement(t1.Boolean, nameOK);
 
 validatePrecision.getValidationErrorMessage = (v) => {
-    if (isNaN(v.precision)) return 'only numbers';
-    return Number(v.precision) < Number(v.rangeMin) || Number(v.precision) > Number(v.rangeMax) ? 'precision must be between max & min' : '';
+    if (isNaN(v.precision)) return 'Enter only numbers';
+    return (Number(v.precision) < Number(v.rangeMin) || Number(v.precision) > Number(v.rangeMax)) ? 'Precision must be between max & min' : '';
 }
 
 validateMaxMin.getValidationErrorMessage = (v) => {
-    if (isNaN(v.rangeMax)) return 'only numbers';
-    return Number(v.rangeMin) > Number(v.rangeMax) ? 'min cant be gt max' : '';
+    if (isNaN(v.rangeMax)) return 'Enter only numbers';
+    return Number(v.rangeMin) > Number(v.rangeMax) ? 'Min cannot be grater than max' : '';
 }
 
 validateMinMax.getValidationErrorMessage = (v) => {
-    if (isNaN(v.rangeMin)) return 'only numbers';
-    return Number(v.rangeMin) > Number(v.rangeMax) ? 'min cant be gt max' : '';
+    if (isNaN(v.rangeMin)) return 'Enter only numbers';
+    return Number(v.rangeMin) > Number(v.rangeMax) ? 'Min cannot be grater than max' : '';
 }
 
 validateName.getValidationErrorMessage = (v) => {
-    return v ? 'name repeated' : '';
+    return v ? 'Name is already in the list' : '';
 }
 
 const Form = t1.form.Form;
@@ -123,9 +123,7 @@ class AttributeForm extends Component {
             expandNumber: false,
             expandEnumerations: true,
             disabled: false,
-            value: {
-                deviceResourceType: 'DEFAULT VALUE'
-            },
+            value: {deviceResourceType: 'DEFAULT VALUE', format: 'none', dataType: 'string'},
             fields: {
                 name: {
                     label: 'Name',
@@ -133,7 +131,7 @@ class AttributeForm extends Component {
                     hasError: true,
                     attrs: {
                         autoFocus: true,
-                        placeholder: 'NAME'
+                        placeholder: 'Name'
                     }
                 },
                 deviceResourceType: {
@@ -143,7 +141,10 @@ class AttributeForm extends Component {
                 },
                 defaultValue: {
                     label: 'Default value:',
-                    disabled: false
+                    disabled: false,
+                    attrs: {
+                        placeholder: 'Insert default value'
+                    }
                 },
                 dataType: {
                     nullOption: false,
@@ -151,34 +152,52 @@ class AttributeForm extends Component {
                 },
                 format: {
                     nullOption: false,
-                    disabled: false
+                    disabled: false,
                 },
                 enumerations: {
                     label: 'Enumerations',
-                    error: 'required'
+                    error: 'required',
+                    attrs: {
+                        placeholder: 'Enter value'
+                    }
                 },
                 rangeMin: {
                     error: '',
                     hasError: true,
-                    required: true
+                    required: true,
+                    attrs: {
+                        placeholder: 'Range min'
+                    }
                 },
                 rangeMax: {
                     error: '',
                     hasError: true,
-                    required: true
+                    required: true,
+                    attrs: {
+                        placeholder: 'Range max'
+                    }
                 },
                 unitOfMeasurement: {
                     error: 'required',
                     hasError: true,
-                    required: true
+                    required: true,
+                    attrs: {
+                        placeholder: 'UoM (eg. mm)'
+                    }
                 },
                 precision: {
                     error: '',
-                    hasError: true
+                    hasError: true,
+                    attrs: {
+                        placeholder: 'Precision (eg. 0.5)'
+                    }
                 },
                 accuracy: {
                     error: '',
-                    hasError: true
+                    hasError: true,
+                    attrs: {
+                        placeholder: 'Accuracy (eg. 0.5)'
+                    }
                 }
             }
         };
@@ -201,102 +220,147 @@ class AttributeForm extends Component {
     handleChangeTextBox = (value, path) => {
 
         this.refs.form.getComponent(path).validate();
-
+        let result;
+        let fields;
         if (path == 'name') {
-            var result = t2.validate(this.props.handleName(value[path]), validateName);
+            result = t2.validate(this.props.handleName(value[path]), validateName);
             if (result.errors.length > 0) {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     name: {
                         error: {'$set': result.errors[0].message}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(true);
             }
             else {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     name: {
                         error: {'$set': ''}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(false);
             }
         }
         if (path == 'rangeMax') {
-            var result = t2.validate(value, validateMaxMin);
+            result = t2.validate(value, validateMaxMin);
             if (result.errors.length > 0) {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     rangeMax: {
                         error: {'$set': result.errors[0].message}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(true);
             }
             else {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     rangeMax: {
                         error: {'$set': ''}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(false);
             }
         }
 
         if (path == 'rangeMin') {
-            var result = t2.validate(value, validateMinMax);
+            result = t2.validate(value, validateMinMax);
             if (result.errors.length > 0) {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     rangeMin: {
                         error: {'$set': result.errors[0].message}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(true);
             }
             else {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     rangeMin: {
                         error: {'$set': ''}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(false);
             }
         }
 
         if (path == 'precision') {
-            var result = t2.validate(value, validatePrecision);
+            result = t2.validate(value, validatePrecision);
             if (result.errors.length > 0) {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     precision: {
                         error: {'$set': result.errors[0].message}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(true);
             }
             else {
-                var fields = t.update(this.state.fields, {
+                fields = t.update(this.state.fields, {
                     precision: {
                         error: {'$set': ''}
                     }
                 });
                 this.setState({fields: fields});
+                this.props.handleButtonState(false);
             }
 
+        }
+
+        if (path == 'dataType') {
+
+            if (value['dataType'] == 'string') {
+                fields = t.update(this.state.fields, {
+                    defaultValue: {disabled: {'$set': false}},
+                    format: {disabled: {'$set': false}}
+                });
+                this.setState({fields: fields});
+                if (value['format'] == 'none') {
+                    this.setState({expandEnumerations: true});
+                    this.setState({expandNumber: false});
+                }
+                else if (value['format'] == 'number') {
+                    this.setState({expandEnumerations: false});
+                    this.setState({expandNumber: true});
+                }
+            }
+
+            else if (value['dataType'] == 'object') {
+
+                fields = t.update(this.state.fields, {
+                    defaultValue: {disabled: {'$set': true}},
+                    format: {disabled: {'$set': true}}
+                });
+                this.setState({expandEnumerations: false});
+                this.setState({expandNumber: false});
+                this.setState({fields: fields});
+            }
+        }
+
+        if (path == 'format') {
+            if (value['dataType'] == 'string') {
+                fields = t.update(this.state.fields, {
+                    defaultValue: {disabled: {'$set': false}},
+                    format: {disabled: {'$set': false}}
+                });
+                this.setState({fields: fields});
+                if (value['format'] == 'number') {
+                    this.setState({expandEnumerations: false});
+                    this.setState({expandNumber: true});
+                } else if (value['format'] == 'none') {
+                    this.setState({expandEnumerations: true});
+                    this.setState({expandNumber: false});
+                }
+            }
         }
 
         (path != 'enumerations') ? (
             this.setState({value}, () => {
                 this.props.attribute[path] = this.state.value[path];
                 this.props.handleEditAttribute(this.props.attribute);
-                (this.props.attribute['dataType'] == 'string' && value['format'] == 'none')
-                    ? this.setState({expandEnumerations: true})
-                    : this.setState({expandEnumerations: true}),
-                    (this.props.attribute['dataType'] == 'string' && value['format'] == 'number')
-                        ? (this.setState({expandNumber: true}), this.setState({expandEnumerations: false}))
-                        : this.setState({expandNumber: false}),
-                    (this.props.attribute['dataType'] == 'object')
-                        ? (this.setState({disabled: true}, () => {
-                        this.setState({value})
-                    }), this.setState({expandEnumerations: false}), this.setState({expandNumber: false}))
-                        : this.setState({disabled: false})
 
 
             })
@@ -314,12 +378,12 @@ class AttributeForm extends Component {
             return (
                 <div className="panel panel-primary">
                     <div className="panel-heading">
-                        <div style={{display:'flex'}} >
+                        <div style={{display: 'flex'}}>
                             <div className="panel-title">{this.props.attribute.id}</div>
-                            <div style={{textAlign:'right',margin:'0 auto'}} >
-                            <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}
-                                        onClick={this.handleDeleteAttribute.bind(this)}/>
-                                </div>
+                            <div style={{textAlign: 'right', margin: '0 auto'}}>
+                                <FlatButton label="Delete attribute" backgroundColor={'lightyellow'}
+                                            onClick={this.handleDeleteAttribute.bind(this)}/>
+                            </div>
                         </div>
 
                     </div>
@@ -345,7 +409,7 @@ class AttributeForm extends Component {
                             </div>
                             <div className="row">
                                 <div
-                                    style={this.state.expandEnumerations ? styles.showDiv : styles.noShowDiv}>
+                                    style={this.state.expandEnumerations ? {display: 'inline'} : {display: 'none'}}>
 
                                     <div className="col-md-5">
                                         <div className="input-group">
@@ -368,7 +432,7 @@ class AttributeForm extends Component {
                             </div>
 
 
-                            <div style={this.state.expandNumber ? styles.showDiv : styles.noShowDiv}>
+                            <div style={this.state.expandNumber ? {display: 'inline'} : {display: 'none'}}>
                                 <div className="row">
                                     <div className="col-md-2">
                                         <div>{locals.inputs.rangeMin}</div>

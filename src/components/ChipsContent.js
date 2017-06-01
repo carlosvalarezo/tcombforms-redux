@@ -8,7 +8,7 @@ const styles = {
     },
     wrapper: {
         display: 'flex',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
     },
 };
 class ChipsContent extends Component {

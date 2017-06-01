@@ -7,7 +7,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 
 
 const styles1 = {
-    height: 600,
+    height: 500,
     overflowY: 'scroll'
 };
 
@@ -18,7 +18,8 @@ class Attribute extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            category: '1'
+            category: '1',
+            button: false
         };
     }
 
@@ -27,6 +28,14 @@ class Attribute extends Component {
             category: category,
         });
     };
+
+    handleButtonState = (buttonState) =>
+    {
+        this.setState({
+            button: buttonState,
+        });
+
+    }
 
     handleNewAttribute() {
         this.props.onCreateAttribute(this.state.category);
@@ -63,6 +72,7 @@ class Attribute extends Component {
                                                     handleEditAttribute={this.handleEditAttribute.bind(this)}
                                                     handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
                                                     handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    handleButtonState={this.handleButtonState.bind(this)}
                                                     category="1"/>
                                     </div>
                                 </div>
@@ -76,6 +86,7 @@ class Attribute extends Component {
                                                     handleEditAttribute={this.handleEditAttribute.bind(this)}
                                                     handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
                                                     handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    handleButtonState={this.handleButtonState.bind(this)}
                                                     category="2"/>
                                     </div>
                                 </div>
@@ -87,6 +98,7 @@ class Attribute extends Component {
                                                     handleEditAttribute={this.handleEditAttribute.bind(this)}
                                                     handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
                                                     handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    handleButtonState={this.handleButtonState.bind(this)}
                                                     category="3"/>
                                     </div>
                                 </div>
@@ -98,6 +110,7 @@ class Attribute extends Component {
                                                     handleEditAttribute={this.handleEditAttribute.bind(this)}
                                                     handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
                                                     handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    handleButtonState={this.handleButtonState.bind(this)}
                                                     category="4"/>
                                     </div>
                                 </div>
@@ -109,6 +122,7 @@ class Attribute extends Component {
                                                     handleEditAttribute={this.handleEditAttribute.bind(this)}
                                                     handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
                                                     handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    handleButtonState={this.handleButtonState.bind(this)}
                                                     category="5"/>
                                     </div>
                                 </div>
@@ -117,9 +131,18 @@ class Attribute extends Component {
 
 
                         <div className="footer">
-
-                            <FlatButton label="Add attribute" backgroundColor={lightBlue50}
-                                        onClick={this.handleNewAttribute.bind(this)}/>
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col-md-3">
+                                        <FlatButton label="Add attribute" backgroundColor={lightBlue50}
+                                                    onClick={this.handleNewAttribute.bind(this)}/>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FlatButton disabled={this.state.button} label="Save" backgroundColor={'yellow'}
+                                                    />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

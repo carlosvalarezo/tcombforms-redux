@@ -28,6 +28,7 @@ class TabContent extends Component {
                                    handleEditAttribute={this.props.handleEditAttribute}
                                    handleDeleteAttribute={this.props.handleDeleteAttribute}
                                    handleDeleteEnumeration={this.props.handleDeleteEnumeration}
+                                   handleButtonState={this.props.handleButtonState}
                                    handleName={this.handleName.bind(this)}
                     />
 
