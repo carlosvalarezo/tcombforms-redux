@@ -6,13 +6,11 @@ import AttributeOutput from './AttributeOutput';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
 
-const styles = {
-    width: '50%',
+const styles1 = {
+    height: 600,
+    overflowY: 'scroll'
 };
 
-const styles2 = {
-    display:'flex',
-};
 
 //Create the attribute in the store and in the UI
 class Attribute extends Component {
@@ -48,54 +46,90 @@ class Attribute extends Component {
 
     render() {
 
-        return (<div style={styles2}>
-                <div style={styles}>
-                    <Tabs
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                    >
-                        <Tab label="One" value="1">
-                            <TabContent attributesList={this.props.attributesList}
-                                        handleEditAttribute={this.handleEditAttribute.bind(this)}
-                                        handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
-                                        handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
-                                        category="1"/>
-                        </Tab>
-                        <Tab label="Two" value="2">
-                            <TabContent attributesList={this.props.attributesList}
-                                        handleEditAttribute={this.handleEditAttribute.bind(this)}
-                                        handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
-                                        handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
-                                        category="2"/>
-                        </Tab>
-                        <Tab label="Three" value="3">
-                            <TabContent attributesList={this.props.attributesList}
-                                        handleEditAttribute={this.handleEditAttribute.bind(this)}
-                                        handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
-                                        handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
-                                        category="3"/>
-                        </Tab>
-                        <Tab label="Four" value="4">
-                            <TabContent attributesList={this.props.attributesList}
-                                        handleEditAttribute={this.handleEditAttribute.bind(this)}
-                                        handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
-                                        handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
-                                        category="4"/>
-                        </Tab>
-                        <Tab label="Five" value="5">
-                            <TabContent attributesList={this.props.attributesList}
-                                        handleEditAttribute={this.handleEditAttribute.bind(this)}
-                                        handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
-                                        handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
-                                        category="5"/>
-                        </Tab>
-                    </Tabs>
-                    <FlatButton label="Add attribute" backgroundColor={lightBlue50}
-                                onClick={this.handleNewAttribute.bind(this)}/>
-                </div>
+        return (<div className="mui-container-fluid">
+                <div className="row">
+                    <div className="col-md-6">
 
-                <div style={styles}>
-                    <AttributeOutput attributesList={this.props.attributesList}/>
+
+                        <Tabs
+                            value={this.state.value}
+                            onChange={this.handleChange}
+                        >
+
+                            <Tab label="One" value="1">
+                                <div className="panel panel-primary">
+                                    <div className="panel-body" style={styles1}>
+                                        <TabContent attributesList={this.props.attributesList}
+                                                    handleEditAttribute={this.handleEditAttribute.bind(this)}
+                                                    handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
+                                                    handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    category="1"/>
+                                    </div>
+                                </div>
+                            </Tab>
+
+
+                            <Tab label="Two" value="2">
+                                <div className="panel panel-primary">
+                                    <div className="panel-body" style={styles1}>
+                                        <TabContent attributesList={this.props.attributesList}
+                                                    handleEditAttribute={this.handleEditAttribute.bind(this)}
+                                                    handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
+                                                    handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    category="2"/>
+                                    </div>
+                                </div>
+                            </Tab>
+                            <Tab label="Three" value="3">
+                                <div className="panel panel-primary">
+                                    <div className="panel-body" style={styles1}>
+                                        <TabContent attributesList={this.props.attributesList}
+                                                    handleEditAttribute={this.handleEditAttribute.bind(this)}
+                                                    handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
+                                                    handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    category="3"/>
+                                    </div>
+                                </div>
+                            </Tab>
+                            <Tab label="Four" value="4">
+                                <div className="panel panel-primary">
+                                    <div className="panel-body" style={styles1}>
+                                        <TabContent attributesList={this.props.attributesList}
+                                                    handleEditAttribute={this.handleEditAttribute.bind(this)}
+                                                    handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
+                                                    handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    category="4"/>
+                                    </div>
+                                </div>
+                            </Tab>
+                            <Tab label="Five" value="5">
+                                <div className="panel panel-primary">
+                                    <div className="panel-body" style={styles1}>
+                                        <TabContent attributesList={this.props.attributesList}
+                                                    handleEditAttribute={this.handleEditAttribute.bind(this)}
+                                                    handleDeleteAttribute={this.handleDeleteAttribute.bind(this)}
+                                                    handleDeleteEnumeration={this.handleDeleteEnumeration.bind(this)}
+                                                    category="5"/>
+                                    </div>
+                                </div>
+                            </Tab>
+                        </Tabs>
+
+
+                        <div className="footer">
+
+                            <FlatButton label="Add attribute" backgroundColor={lightBlue50}
+                                        onClick={this.handleNewAttribute.bind(this)}/>
+                        </div>
+
+                    </div>
+
+
+                    <div className="col-md-6">
+                        <div className="well well-lg">
+                            <AttributeOutput attributesList={this.props.attributesList}/>
+                        </div>
+                    </div>
                 </div>
 
 

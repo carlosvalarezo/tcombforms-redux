@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import AttributeForm from '../forms/AttributeForm';
 
+
 class TabContent extends Component {
     constructor(props) {
         super(props);
@@ -12,14 +13,9 @@ class TabContent extends Component {
     }
 
     handleName(name) {
-        return(this.props.attributesList.find((attribute) => {
+        return (this.props.attributesList.find((attribute) => {
             return attribute.name === name;
         })) ? true : false;
-        /*for (i < this.props.attributesList.length; i++) {
-            let localName = this.props.attributesList[i].name;
-            console.log("name ", localName, " - ", i);
-            return (this.props.attributesList[i].name === name);
-        }*/
     }
 
     render() {
@@ -27,12 +23,16 @@ class TabContent extends Component {
             return (attribute.category === this.state.category);
         }).map((attribute) => {
                 return (
+
                     <AttributeForm attribute={attribute} key={attribute.id}
                                    handleEditAttribute={this.props.handleEditAttribute}
                                    handleDeleteAttribute={this.props.handleDeleteAttribute}
                                    handleDeleteEnumeration={this.props.handleDeleteEnumeration}
                                    handleName={this.handleName.bind(this)}
                     />
+
+
+
                 );
             }
         );
