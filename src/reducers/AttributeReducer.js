@@ -35,14 +35,87 @@ const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
                 return attribute.id === action.payload.id;
             });
 
+            let indexEnum = state.attributesList[indexArray].enumerations.indexOf(action.payload.enumeration);
             let result = {
+                ...state,
                 ...state.attributesList[indexArray],
-                enumerations: (
-                    state.attributesList.map(attribute =>
-                        attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
-                            return enumeration !== action.payload.enumeration
-                        })) : attribute).toString().split(","))
+                enumerations: [
+                    ...state.attributesList[indexArray].enumerations.slice(0, indexEnum),
+                    ...state.attributesList[indexArray].enumerations.slice(indexEnum + 1)
+                ].toString().split(",")
             }
+
+            /*let result = {
+                ...state,
+                ...state.attributesList[indexArray],
+                enumerations: [
+                    ...state.attributesList[indexArray].enumerations.slice(0, indexEnum),
+                    ...state.attributesList[indexArray].enumerations.slice(indexEnum + 1)
+                ]
+
+            }*/
+            //FUNCIONA PERO HAY UN PROBLEMA CON EL RENDER
+            /*let result = {
+             ...state.attributesList[indexArray],
+             enumerations: (
+             state.attributesList.map(attribute =>
+             attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+             return enumeration !== action.payload.enumeration
+             })) : attribute).toString().split(","))
+             }*/
+
+            /*AQUI ESTOY
+             let result = {
+
+             ...state,
+             attributesList: {
+             ...state.attributesList[indexArray],
+             enumerations: (
+             state.attributesList.map(attribute =>
+             attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+             return enumeration !== action.payload.enumeration
+             })) : attribute).toString().split(","))
+
+             }
+             }*/
+
+            /*
+             * {
+             enumerations: (
+             state.attributesList.map(attribute =>
+             attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+             return enumeration !== action.payload.enumeration
+             })) : attribute).toString().split(","))
+             }
+             * */
+            /*let result = {
+             ...state,
+             attributesList: [
+             ...state.attributesList,
+             ...{
+             ...state.attributesList[indexArray].enumerations,
+             ...state.attributesList.map(attribute =>
+             attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+             return enumeration !== action.payload.enumeration
+             })) : attribute).toString().split(",")
+             }
+             ,
+
+             ]
+             }*/
+
+
+            /*let result = {
+             ...state,
+             attributesList: {
+             enumerations: (
+             state.attributesList.map(attribute =>
+             attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+             return enumeration !== action.payload.enumeration
+             })) : attribute).toString().split(","))
+             }
+
+             }*/
             console.log("FINAL ", result);
             return result;
         default:
