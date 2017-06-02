@@ -12,15 +12,17 @@ const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
             return {...state, attributesList: [...state.attributesList, action.payload]};
         case constants.CHANGE_ATTRIBUTE:
             return {
-                ...state, attributesList: state.attributesList.map(attribute => attribute.id === action.id ?
-                {attribute, attributesList: action} : attribute)
+                ...state,
+                attributesList: state.attributesList.map(attribute =>
+                    attribute.id === action.id
+                        ?
+                    {attribute, attributesList: action}
+                        : attribute)
             };
         case constants.DELETE_ATTRIBUTE:
-            var index = state.attributesList.findIndex(() => {
-                return state.attributesList.filter((a) => {
-                    return a.id === action.payload.id
-                })
-            });
+            let index = state.attributesList.findIndex((attribute) => {
+                return attribute.id === action.payload.id;
+            })
             return {
                 ...state,
                 attributesList: [
@@ -29,20 +31,20 @@ const AttributeReducer = (state = INITIAL_STATE, action = {}) => {
                 ]
             }
         case constants.DELETE_ENUMERATION:
-            var indexEnum = state.attributesList[0].enumerations.indexOf(action.payload);
-            return {
-                ...state,
-                attributesList: [
-                    ...state.attributesList.slice(0, indexEnum),
-                    {
-                        ...state.attributesList[indexEnum],
-                        enumerations: [
-                            ...state.attributesList[indexEnum].enumerations.slice(0, indexEnum),
-                            ...state.attributesList[indexEnum].enumerations.slice(indexEnum + 1),
-                        ],
-                    },
-                    ...state.attributesList.slice(indexEnum + 1)],
-            };
+            let indexArray = state.attributesList.findIndex((attribute) => {
+                return attribute.id === action.payload.id;
+            });
+
+            let result = {
+                ...state.attributesList[indexArray],
+                enumerations: (
+                    state.attributesList.map(attribute =>
+                        attribute.id === action.payload.id ? (attribute.enumerations.filter((enumeration) => {
+                            return enumeration !== action.payload.enumeration
+                        })) : attribute).toString().split(","))
+            }
+            console.log("FINAL ", result);
+            return result;
         default:
             return state;
     }

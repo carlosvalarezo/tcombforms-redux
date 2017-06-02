@@ -76,14 +76,14 @@ var minMax = (x) => {
 };
 
 var nameOK = (x) => {
-    console.log("nameOK = ", x);
     return !x;
 
 }
 
 var precision = (x) => {
-    let range = Number(x.rangeMax) - Number(x.rangeMin);
-    return (Number(range) % Number(x.precision)) === 0;
+    /*let range = Number(x.rangeMax) - Number(x.rangeMin);
+    return Number(range) % Number(x.precision) === 0;*/
+    return !(Number(x.precision) < Number(x.rangeMin) || Number(x.precision) > Number(x.rangeMax))
 }
 
 var validateMaxMin = t2.refinement(t1.Any, maxMin);
@@ -127,8 +127,9 @@ class AttributeForm extends Component {
             fields: {
                 name: {
                     label: 'Name',
-                    error: '',
+                    error: 'Required',
                     hasError: true,
+                    required:true,
                     attrs: {
                         autoFocus: true,
                         placeholder: 'Name'
@@ -163,38 +164,35 @@ class AttributeForm extends Component {
                 },
                 rangeMin: {
                     error: '',
-                    hasError: true,
-                    required: true,
+                    hasError: false,
                     attrs: {
                         placeholder: 'Range min'
                     }
                 },
                 rangeMax: {
                     error: '',
-                    hasError: true,
-                    required: true,
+                    hasError: false,
                     attrs: {
                         placeholder: 'Range max'
                     }
                 },
                 unitOfMeasurement: {
-                    error: 'required',
-                    hasError: true,
-                    required: true,
+                    error: '',
+                    hasError: false,
                     attrs: {
                         placeholder: 'UoM (eg. mm)'
                     }
                 },
                 precision: {
                     error: '',
-                    hasError: true,
+                    hasError: false,
                     attrs: {
                         placeholder: 'Precision (eg. 0.5)'
                     }
                 },
                 accuracy: {
                     error: '',
-                    hasError: true,
+                    hasError: false,
                     attrs: {
                         placeholder: 'Accuracy (eg. 0.5)'
                     }
@@ -205,6 +203,7 @@ class AttributeForm extends Component {
 
     componentDidMount() {
         this.setState({attribute: this.props.attribute});
+        this.props.handleButtonState(this.state.fields.name.hasError);
     }
 
     addEnumeration = () => {
@@ -227,6 +226,7 @@ class AttributeForm extends Component {
             if (result.errors.length > 0) {
                 fields = t.update(this.state.fields, {
                     name: {
+                        hasError: {'$set':true},
                         error: {'$set': result.errors[0].message}
                     }
                 });
@@ -236,6 +236,7 @@ class AttributeForm extends Component {
             else {
                 fields = t.update(this.state.fields, {
                     name: {
+                        hasError: {'$set':false},
                         error: {'$set': ''}
                     }
                 });
@@ -248,6 +249,7 @@ class AttributeForm extends Component {
             if (result.errors.length > 0) {
                 fields = t.update(this.state.fields, {
                     rangeMax: {
+                        hasError: {'$set':true},
                         error: {'$set': result.errors[0].message}
                     }
                 });
@@ -257,6 +259,11 @@ class AttributeForm extends Component {
             else {
                 fields = t.update(this.state.fields, {
                     rangeMax: {
+                        hasError: {'$set':false},
+                        error: {'$set': ''}
+                    },
+                    rangeMin: {
+                        hasError: {'$set':false},
                         error: {'$set': ''}
                     }
                 });
@@ -270,6 +277,7 @@ class AttributeForm extends Component {
             if (result.errors.length > 0) {
                 fields = t.update(this.state.fields, {
                     rangeMin: {
+                        hasError: {'$set':true},
                         error: {'$set': result.errors[0].message}
                     }
                 });
@@ -279,6 +287,7 @@ class AttributeForm extends Component {
             else {
                 fields = t.update(this.state.fields, {
                     rangeMin: {
+                        hasError: {'$set':false},
                         error: {'$set': ''}
                     }
                 });
@@ -292,6 +301,7 @@ class AttributeForm extends Component {
             if (result.errors.length > 0) {
                 fields = t.update(this.state.fields, {
                     precision: {
+                        hasError: {'$set':true},
                         error: {'$set': result.errors[0].message}
                     }
                 });
@@ -301,6 +311,7 @@ class AttributeForm extends Component {
             else {
                 fields = t.update(this.state.fields, {
                     precision: {
+                        hasError: {'$set':false},
                         error: {'$set': ''}
                     }
                 });
@@ -425,7 +436,7 @@ class AttributeForm extends Component {
                                         </div>
                                     </div>
                                     <div className="col-md-3">
-                                        <ChipsContent chips={this.props.attribute.enumerations}
+                                        <ChipsContent chips={this.props.attribute}
                                                       handleDeleteEnumeration={this.props.handleDeleteEnumeration}/>
                                     </div>
                                 </div>

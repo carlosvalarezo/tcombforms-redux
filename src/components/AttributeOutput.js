@@ -14,7 +14,7 @@ class AttributeOutput extends Component {
 
     render() {
         return <div style={{"width": "100%"}}>LIVE JSON Output<br/>
-            <code>{JSON.stringify(this.props.attributesList, null, 1)}</code></div>
+            <code>{JSON.stringify(this.props.attributesList, null, ' ')}</code></div>
 
     }
 }
